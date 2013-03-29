@@ -7,9 +7,13 @@ A ``link`` can only have a single sender and a single reciver.
 
 
 The source code is locate at `github <https://github.com/youngking/slinker>`_ .
+
 .. image:: https://travis-ci.org/youngking/slinker.png?branch=master
    :alt: Build Status
 
+
+Introduction
+------------------
 
 Link receiver can subscribe to specific link. A reciver function required
 a sender argument, and a keyworld argument which is optional.
@@ -42,3 +46,9 @@ you must disconnect the formly receiver.
   ... True
   >>> result == 'hello'
   ...  True
+
+
+More examples
+----------------
+
+see the ``tests`` directory.
