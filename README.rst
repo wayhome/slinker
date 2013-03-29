@@ -5,6 +5,8 @@ Slinker provide a single one to one event, we call it a ``link``.
 
 A ``link`` can only have a single sender and a single reciver.
 
+
+The source code is locate at `github <https://github.com/youngking/slinker>`_ .
 .. image:: https://travis-ci.org/youngking/slinker.png?branch=master
    :alt: Build Status
 
