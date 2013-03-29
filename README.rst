@@ -9,8 +9,9 @@ A ``link`` can only have a single sender and a single reciver.
 Signal receivers can subscribe to specific senders or receive signals
 sent by any sender.
 
-  >>> from slinker import link
-  >>> started = link('round-started')
+  >>> from slinker import Namespace
+  >>> links = Namespace()
+  >>> started = links.link('round-started')
   >>> def each(round):
   ...     print "Round %s!" % round
   ...
@@ -22,3 +23,13 @@ sent by any sender.
   Round 1!
   Round 2!
   Round 3!
+  >>> started.disconnect(each)
+  >>> from slinker import receiver
+  >>> @receiver(started)
+      def test(sender, **kwargs):
+  ...     return sender
+  >>> func, result = started.send('hello')
+  >>> func == test
+  ... True
+  >>> result == 'hello'
+  ...  True

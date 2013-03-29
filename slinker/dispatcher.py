@@ -38,7 +38,7 @@ class Link(object):
         self.providing_args = set(providing_args)
         self.lock = threading.Lock()
 
-    def connect(self, receiver, sender=None, weak=True, dispatch_uid=None):
+    def connect(self, receiver, weak=True):
         """
         Connect receiver to sender for link.
 
@@ -58,27 +58,17 @@ class Link(object):
                 not be added if another receiver already exists with that
                 dispatch_uid.
 
-            sender
-                The sender to which the receiver should respond. Must either be
-                of type Link, or None to receive events from any sender.
 
             weak
                 Whether to use weak references to the receiver. By default, the
                 module will attempt to use weak references to the receiver
                 objects. If this parameter is false, then strong references will
                 be used.
-
-            dispatch_uid
-                An identifier used to uniquely identify a particular instance of
-                a receiver. This will usually be a string, though it may be
-                anything hashable.
         """
         if self.receiver:
             raise TypeError("a link can only has a single receiver")
-        if dispatch_uid:
-            lookup_key = (dispatch_uid, _make_id(sender))
-        else:
-            lookup_key = (_make_id(receiver), _make_id(sender))
+
+        lookup_key = _make_id(receiver)
 
         if weak:
             receiver = saferef.safeRef(
@@ -87,7 +77,7 @@ class Link(object):
         with self.lock:
             self.receiver = lookup_key, receiver
 
-    def disconnect(self, receiver=None, sender=None, weak=True, dispatch_uid=None):
+    def disconnect(self, receiver=None, weak=True):
         """
         Disconnect receiver from sender for link.
 
@@ -106,13 +96,8 @@ class Link(object):
             weak
                 The weakref state to disconnect
 
-            dispatch_uid
-                the unique identifier of the receiver to disconnect
         """
-        if dispatch_uid:
-            lookup_key = (dispatch_uid, _make_id(sender))
-        else:
-            lookup_key = (_make_id(receiver), _make_id(sender))
+        lookup_key = _make_id(receiver)
 
         with self.lock:
             r_key, _ = self.receiver
@@ -140,7 +125,6 @@ class Link(object):
         if not self.receiver:
             return None, None
 
-        #receiver = self._live_receiver(sender)
         _, weak_receiver = self.receiver
         receiver = weak_receiver()
         response = receiver(link=self, sender=sender, **named)
@@ -172,8 +156,6 @@ class Link(object):
         if not self.receiver:
             return None, None
 
-        # Call each receiver with whatever arguments it can accept.
-        # Return a list of tuple pairs [(receiver, response), ... ].
         _, weak_receiver = self.receiver
         receiver = weak_receiver()
         try:
