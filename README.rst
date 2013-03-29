@@ -9,8 +9,8 @@ A ``link`` can only have a single sender and a single reciver.
    :alt: Build Status
 
 
-Signal receivers can subscribe to specific senders or receive signals
-sent by any sender.
+Link receiver can subscribe to specific link. A reciver function required
+a sender argument, and a keyworld argument which is optional.
 
   >>> from slinker import Namespace
   >>> links = Namespace()
@@ -19,13 +19,17 @@ sent by any sender.
   ...     print "Round %s!" % round
   ...
   >>> started.connect(each)
-
   >>> for round in range(1, 4):
   ...     started.send(round)
   ...
   Round 1!
   Round 2!
   Round 3!
+
+Here provide a decorator ``receiver`` which can be used for connect. Because a
+link can only have one reciever. If you want to connect to another receiver, 
+you must disconnect the formly receiver.
+
   >>> started.disconnect(each)
   >>> from slinker import receiver
   >>> @receiver(started)
